@@ -1,37 +1,23 @@
-language: go
 sudo: required
-dist: trusty
-
-go:
-  - 1.8.x
-  - 1.9.x
-
-env:
-  global:
-  - PATH=$GOROOT/bin:$GOPATH/bin:$PATH
-  matrix:
-  - TARGET=amd64
-  - TARGET=arm
-  - TARGET=arm64
-  - TARGET=ppc64le
-  - TARGET=s390x
-
-matrix:
-  fast_finish: true
-
-install:
-  - go get github.com/onsi/ginkgo/ginkgo
-
-script:
- - |
-   if [ "${TARGET}" == "amd64" ]; then
-     GOARCH="${TARGET}" ./test.sh
-   else
-     GOARCH="${TARGET}" ./build.sh
-   fi
-
+language: go
 notifications:
   email: false
 
-git:
-  depth: 9999999
+go:
+- 1.10.x
+
+script:
+- dpkg-buildpackage -us -uc -b
+
+install:
+- sudo apt update && sudo apt install -yq golang-go binutils dpkg-dev build-essential fakeroot debhelper
+
+deploy:
+  provider: releases
+  api_key:
+    secure: cXsjZPrnBkiQ+cj/xZFjSmpwW4qJ4U2RUN78pYUArEQxL0VsfCRAMl//1ezOMHJvtwLtF+YThlfM/PYXwJ6uDciJuE1CiOubLuuDsxwsqcNmOY5RlKbnVQQWuRagDfCAoraq0XseLDQtFgdBlbI6HwRDFOOB2MzzRMMJqMfPh5UgcWC8Oqg31d8OgNV7sXxNQbfI169TMeTLhwHAYRUktruFviXhhWT2lrnx+y7L2mrsNI+IVfUBVrTBnLe5s3NC42dchykUGVJA/yNcbf2NvoYhmu/PsQujNqwtm4Not6vBCpkG05eKZnPRx+2zH14jTvYyub5az3DNkwOMSc16llHfOQ2GF805Hj0o0PdZTVJB+LbBe1w9yCB98qT72yRtIjaPXFnW3MypogMSNRKAcmdiWAksv3rl2paeFqzF1cAro7ajfgassF5kaXQylk9FEKbjAS9mgbpsBZ7HOmVfqCMjptcuxHHAC3a6RkdY5A4woM9aKGm7QZ3wsf/YBNQpnEZM7JUKDL7A1zTnIYaiRHug77UOW9Dy07zIl/dHmCvN4vWxKLiLao6S5o0PXWhOLA1lNhsnGNDplQfGUuUKQivv3Njru3szGKtiTgAk0MYU1Rlk7abbHQDGfN7dZTFuNOMt+aW9fsITvE6T2SOetDtosg90g60NVczIcYTrIQQ=
+  file_glob: true
+  file: "../cni-plugins_*.deb"
+  on:
+    repo: vs-eth/cni-plugins
+    tags: true

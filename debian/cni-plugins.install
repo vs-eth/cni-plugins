@@ -1,0 +1,3 @@
+bin/bridge /usr/lib/x86_64-linux-gnu/libexec/cni-plugins/
+bin/host-local /usr/lib/x86_64-linux-gnu/libexec/cni-plugins/
+bin/loopback /usr/lib/x86_64-linux-gnu/libexec/cni-plugins/
